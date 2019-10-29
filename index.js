@@ -20,10 +20,7 @@ parser.parseString(parse, (err, result)=>{
     );
 })
 let sheet_name_list = workbook.SheetNames;
-let xlData = ss_ = workbook.Sheets[sheet_name_list[0]];
-let ss_ = {};
-ss = 0;
-let bufferStock = 0;
+let xlData = workbook.Sheets[sheet_name_list[0]];
 let newxlData = {};
 for (let key of Object.keys(xlData)) {
     
