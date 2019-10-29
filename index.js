@@ -1,6 +1,6 @@
 const fs = require('fs');
-var XLSX = require('xlsx')
-var workbook = XLSX.readFile('ARTI_M.xls');
+const XLSX = require('xlsx')
+const workbook = XLSX.readFile('ARTI_M.xls');
 const parseString = require('xml2js').Parser;
 const xlsx = require("xlsx")
 const parser = new parseString();
@@ -19,9 +19,9 @@ parser.parseString(parse, (err, result)=>{
         }
     );
 })
-var sheet_name_list = workbook.SheetNames;
-var xlData = ss_ = workbook.Sheets[sheet_name_list[0]];
-var ss_ = {};
+let sheet_name_list = workbook.SheetNames;
+let xlData = ss_ = workbook.Sheets[sheet_name_list[0]];
+let ss_ = {};
 ss = 0;
 let bufferStock = 0;
 let newxlData = {};
