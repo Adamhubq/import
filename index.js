@@ -1,7 +1,7 @@
 const fs = require(`fs`);
 const XLSX = require(`xlsx`);
 const csv = require('csv-parser');
-
+const Iconv = require('iconv').Iconv;
 
 
 
@@ -51,12 +51,14 @@ async function prom(name) {
     })
 }
 class ARTIM {
-    constructor(array, xlsFile) {
+    constructor(fileCsvName, xlsFile, encoding) {
         // const workbook = XLSX.readFile(`parse/templateParse/ARTI_M.xls`);
-        console.log('ARTIM');
+        let array = encoding ? this.decode(fileCsvName)
+             : fs.readFileSync(fileCsvName, 'utf-8').split('\n').map(val => val.split('\;'));
         let fileTemplate = XLSX.readFile(xlsFile);
         let sheet_name_list = fileTemplate.SheetNames;
         let xlData = fileTemplate.Sheets[sheet_name_list[0]]; // read first sheet
+        console.log(array);
         let arrayKey = array.map(val => val[0]);
         let arrayVal = array.map(val => val[8]);
         let json = XLSX.utils.sheet_to_json(xlData);
@@ -77,6 +79,12 @@ class ARTIM {
             }
         }
     }
+    decode(string) {
+        
+        let conv = Iconv('windows-1251', 'utf8');
+        let body = conv.convert(fs.readFileSync(string)).toString();
+        return body.split('\n').map(val => val.split('\;'));
+    }
 }
 
 class ParcerXLS {
@@ -89,17 +97,17 @@ class ParcerXLS {
 
 class ParcerCSV {
     constructor(filePathNameCsv, filePathNameXls) {
-        this.array = fs.readFileSync(filePathNameCsv, 'utf-8').split('\n').map(val => val.split('\;'));
+        this.filePathNameCsv = filePathNameCsv;
         this.filePathNameXls = `parse/xls/${filePathNameXls}`;
     };
     generateFiel() {
-        
         if ((this.filePathNameXls.indexOf('ARTI_M.xls') + 1)) {
-            return new ARTIM(this.array, this.filePathNameXls); 
+            return new ARTIM(this.filePathNameCsv, this.filePathNameXls); 
         }
-        console.log(this.filePathNameXls);
+        if ((this.filePathNameXls.indexOf('LAFARG.xls') + 1)) {
+            return new ARTIM(this.filePathNameCsv, this.filePathNameXls, true); 
+        }
         return null;
-        
     }
     showFilesARTIM() {
         return new ARTIM(this.array);
@@ -110,13 +118,14 @@ class Factory { // Class xls psevdo factories
         this.filePathName = filePathName;
         this.filePathNameXls = filePathNameXls;
         this.encoding = 'utf-8';
-        console.log('Factory');
     }
     getFactory() {
         if ((this.filePathName.indexOf(`xls`) + 1)) {
+            console.log('xls');
             return new ParcerXLS(this.filePathName, this.filePathNameXls);
         }
         if ((this.filePathName.indexOf(`csv`) + 1)) {
+            console.log('csv');
             return new ParcerCSV(this.filePathName, this.filePathNameXls)
         }
         throw new Error('EXCEPT! undefined type')
@@ -130,16 +139,26 @@ let arrayGreat = [];
 
 JSON.parse(arrayFileName).map(val => {
     let newFiles1 = new Factory(`parse/csv/${Object.keys(val)[0]}`, Object.values(val)[0]);
-    newFiles1.getFactory().generateFiel().newxlData
-        .map(value => arrayGreat.push(value));
+    let ales = newFiles1.getFactory().generateFiel();
+    console.log(ales);
+        // .map(value => arrayGreat.push(value));
 })
 
 console.log(arrayGreat);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 // console.log(objParseFile.newxlData)
-
-
-
 
