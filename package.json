@@ -11,7 +11,7 @@
   "devDependencies": {
     "nodemon": "^1.19.4",
     "read-xml": "^3.0.0",
-    "xlsx": "^0.15.1",
+    "xlsx": "^0.17.0",
     "xml2js": "^0.4.22"
   },
   "dependencies": {
